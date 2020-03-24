@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use Hash;
+use Image;
+use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -27,6 +29,7 @@ class ProfileController extends Controller
 // to validation 
             $request->validate([
                 'name' => 'required|string|max:255',
+                // 'image' => 'required',
                 'username' => 'required|string|max:255|unique:users,username,' . $currentUser->id,
                 'email' => 'required|string|email|max:255|unique:users,email,' . $currentUser->id,
                 'password' => 'required_with:password_confirmation|confirmed',
@@ -43,11 +46,26 @@ class ProfileController extends Controller
             $currentUser->email = $request->email;
             $currentUser->username = $request->username;
 
-                if (!empty($request->password)) {
-                    $currentUser->password = Hash::make($request->password);
-                }
+            if (!empty($request->password)) {
+                $currentUser->password = Hash::make($request->password);
+            }
+
+            // to change image to user 
+            if($request->hasFile('image')){
+                $image = $request->file('image');
+                $filename = time() . '.' . $image->getClientOriginalExtension();
+                Image:: make($image)->resize(300, 300)->save(public_path('uploads/avatars/' . $filename ));
+                
+                $user = Auth::user();
+                $user->image = $filename ;
+                $user->save();
+            }
+
+
             $currentUser->save();
             return redirect()->back()->with('success', 'Profile updated successfully!');
+
+// handle the user upload of image
 
     }
 

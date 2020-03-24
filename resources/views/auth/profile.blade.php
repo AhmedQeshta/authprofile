@@ -3,9 +3,10 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
+        
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Update Profile') }}</div>
+                <div class="card-header">{{ __('Update Profile {')  }} <strong> {{ old('name',$user->name) }} </strong> {{ __('}')  }}</div>
 
                 <div class="card-body">
                     @if(session('success'))
@@ -14,7 +15,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('update-profile') }}">
+                    <form method="POST" action="{{ route('update-profile') }}" enctype="multipart/form-data">
                         @csrf
                         {{method_field('put')}}
                         {{-- @method('put') --}}
@@ -109,6 +110,25 @@
                                 @endif
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-7">
+                                <img src="/uploads/avatars/{{$user->image}}" class="rounded mx-auto d-block" style="width:150px; height:150px; border-radius: 50%" alt="user image">
+
+                            </div>
+                            <div class="col-md-5 py-5 px-1">
+                                <input id="image" type="file" class=" @error('image') is-invalid @enderror" name="image"  autocomplete="image">
+
+                                @if ($errors->has('image'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('image') }}</strong>
+                                </span>
+                                @else
+                                    <small class="form-text text-muted">this image not required and it <strong> 300X300 </strong></small>
+                                @endif
+                            </div>
+                        </div>
+                       
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
