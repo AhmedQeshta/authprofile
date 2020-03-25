@@ -29,7 +29,7 @@ class ProfileController extends Controller
 // to validation 
             $request->validate([
                 'name' => 'required|string|max:255',
-                // 'image' => 'required',
+                'image' => 'mimes:jpeg,bmp,png,gif,svg',
                 'username' => 'required|string|max:255|unique:users,username,' . $currentUser->id,
                 'email' => 'required|string|email|max:255|unique:users,email,' . $currentUser->id,
                 'password' => 'required_with:password_confirmation|confirmed',
